@@ -193,3 +193,15 @@ body {
     font-size: 15px;
   }
 }
+
+.footer {
+  background-color: #1e1e2f;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  position: fixed; /* optional: sticks to bottom */
+  width: 100%;     /* full width */
+  bottom: 0;       /* sticks at bottom */
+}
+

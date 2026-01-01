@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather APP</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Search bar -->
+    <div class="card">
+      <div class="search">
+        <input
+          type="text"
+          id="cityInput"
+          placeholder="Enter city or country name"
+          spellcheck="false"
+        />
+        <button id="searchBtn">
+          <img src="search.png" alt="Search" />
+          <!-- Add a white search icon -->
+        </button>
+      </div>
+    </div>
+
+    <!-- Weather card -->
+    <div class="weather">
+      <img src="rain.png" alt="Weather Icon" class="weather-icon" />
+      <h1 class="temp">22°C</h1>
+      <h2 class="city">Ethiopia</h2>
+
+      <div class="detail">
+        <div class="col">
+          <img src="humidity.png" alt="Humidity Icon" />
+          <div>
+            <p class="humidity">50%</p>
+            <p>Humidity</p>
+          </div>
+        </div>
+        <div class="col">
+          <img src="wind.png" alt="Wind Icon" />
+          <div>
+            <p class="wind">15 km/h</p>
+            <p>Wind Speed</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const apiKey = "cbcf1fcae736ec6aedf57f43aee27c9a"; //  API  key
+      const apiUrl =
+        "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+      const searchBox = document.querySelector(".search input");
+      const searchBtn = document.querySelector(".search button");
+      const weatherIcon = document.querySelector(".weather-icon");
+
+      async function checkWeather(city) {
+        const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+
+        if (response.status === 404) {
+          alert("City not found! Please check spelling.");
+          return;
+        }
+
+        var data = await response.json();
+        // Hide harmless Chrome extension
+        window.addEventListener("unhandledrejection", function (e) {
+          if (
+            e.reason &&
+            e.reason.message &&
+            e.reason.message.includes("message channel closed")
+          ) {
+            e.preventDefault();
+          }
+        });
+        document.querySelector(".city").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML =
+          Math.round(data.main.temp) + "°C";
+        document.querySelector(".humidity").innerHTML =
+          data.main.humidity + "%";
+        document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+
+        // Optional: Change main weather icon based on condition
+        const condition = data.weather[0].main.toLowerCase();
+        if (condition.includes("cloud")) {
+          weatherIcon.src = "clouds.png";
+        } else if (
+          condition.includes("rain") ||
+          condition.includes("drizzle")
+        ) {
+          weatherIcon.src = "rain.png";
+        } else if (condition.includes("clear")) {
+          weatherIcon.src = "clear.png";
+        } else if (condition.includes("snow")) {
+          weatherIcon.src = "snow.png";
+        } else {
+          weatherIcon.src = "mist.png";
+        }
+      }
+
+      // Search when button clicked
+      searchBtn.addEventListener("click", () => {
+        checkWeather(searchBox.value);
+      });
+
+      // Search when Enter key pressed (very useful!)
+      searchBox.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          checkWeather(searchBox.value);
+        }
+      });
+
+      // Optional: Load default city on page load
+      checkWeather("ethiopia");
+    </script>
+  </body>
+</html>
